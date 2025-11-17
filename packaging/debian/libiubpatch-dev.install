@@ -1,0 +1,3 @@
+usr/include/*
+usr/lib/*/libiubpatch.so
+usr/lib/*/pkgconfig/iubpatch.pc

@@ -1,0 +1,16 @@
+CompileFlags:
+  Add:
+    - -DIUBPATCH_EXPORTS
+    - -DIUBPATCH_VERSION_MAJOR=0
+    - -DIUBPATCH_VERSION_MINOR=1
+    - -DIUB_ENABLE_MMAP=1
+  CompilationDatabase: .
+
+Diagnostics:
+  UnusedIncludes: Relaxed
+  MissingIncludes: Relaxed
+
+InlayHints:
+  Enabled: Yes
+  ParameterNames: Yes
+  DeducedTypes: Yes

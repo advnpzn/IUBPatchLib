@@ -1,0 +1,119 @@
+# Packaging configuration
+
+include(GNUInstallDirs)
+
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/iubpatch.pc.in
+    ${CMAKE_CURRENT_BINARY_DIR}/iubpatch.pc
+    @ONLY
+)
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/iubpatch.pc
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+)
+
+set(CPACK_PACKAGE_NAME "iubpatch")
+set(CPACK_PACKAGE_VENDOR "IUBPatchLib Contributors")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Modern C++20 library for IPS, UPS, and BPS binary patches")
+set(CPACK_PACKAGE_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+set(CPACK_PACKAGE_VERSION_MINOR ${PROJECT_VERSION_MINOR})
+set(CPACK_PACKAGE_VERSION_PATCH ${PROJECT_VERSION_PATCH})
+set(CPACK_PACKAGE_CONTACT "advnpzn@proton.me")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
+set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
+
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+    set(ARCH "x86_64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|ARM64")
+    set(ARCH "aarch64")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "armv7l")
+    set(ARCH "armv7l")
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i686")
+    set(ARCH "i686")
+else()
+    set(ARCH ${CMAKE_SYSTEM_PROCESSOR})
+endif()
+
+set(CPACK_PACKAGE_FILE_NAME "iubpatch-${ARCH}-${PROJECT_VERSION}")
+set(CPACK_DEBIAN_FILE_NAME "iubpatch-${ARCH}-${PROJECT_VERSION}.deb")
+set(CPACK_RPM_FILE_NAME "iubpatch-${ARCH}-${PROJECT_VERSION}.rpm")
+
+set(CPACK_DEBIAN_RUNTIME_FILE_NAME "iubpatch-runtime-${ARCH}-${PROJECT_VERSION}.deb")
+set(CPACK_DEBIAN_DEVELOPMENT_FILE_NAME "iubpatch-dev-${ARCH}-${PROJECT_VERSION}.deb")
+set(CPACK_DEBIAN_TOOLS_FILE_NAME "iubpatch-tools-${ARCH}-${PROJECT_VERSION}.deb")
+
+set(CPACK_RPM_RUNTIME_FILE_NAME "iubpatch-runtime-${ARCH}-${PROJECT_VERSION}.rpm")
+set(CPACK_RPM_DEVELOPMENT_FILE_NAME "iubpatch-devel-${ARCH}-${PROJECT_VERSION}.rpm")
+set(CPACK_RPM_TOOLS_FILE_NAME "iubpatch-tools-${ARCH}-${PROJECT_VERSION}.rpm")
+
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Package Maintainer <advnpzn@proton.me>")
+set(CPACK_DEBIAN_PACKAGE_SECTION "libs")
+set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libc6 (>= 2.31), libstdc++6 (>= 10)")
+set(CPACK_DEBIAN_PACKAGE_HOMEPAGE "https://github.com/advnpzn/IUBPatchLib")
+
+set(CPACK_DEB_COMPONENT_INSTALL ON)
+set(CPACK_DEBIAN_RUNTIME_PACKAGE_NAME "libiubpatch0")
+set(CPACK_DEBIAN_DEVELOPMENT_PACKAGE_NAME "libiubpatch-dev")
+set(CPACK_DEBIAN_TOOLS_PACKAGE_NAME "iubpatch-tools")
+
+set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+set(CPACK_RPM_PACKAGE_GROUP "System Environment/Libraries")
+set(CPACK_RPM_PACKAGE_URL "https://github.com/advnpzn/IUBPatchLib")
+set(CPACK_RPM_PACKAGE_REQUIRES "glibc >= 2.31, libstdc++ >= 10")
+
+set(CPACK_RPM_COMPONENT_INSTALL ON)
+set(CPACK_RPM_RUNTIME_PACKAGE_NAME "iubpatch")
+set(CPACK_RPM_DEVELOPMENT_PACKAGE_NAME "iubpatch-devel")
+set(CPACK_RPM_TOOLS_PACKAGE_NAME "iubpatch-tools")
+
+set(CPACK_COMPONENTS_ALL runtime development tools)
+set(CPACK_COMPONENT_RUNTIME_DISPLAY_NAME "IUBPatchLib Runtime")
+set(CPACK_COMPONENT_RUNTIME_DESCRIPTION "Shared library for IUBPatchLib")
+set(CPACK_COMPONENT_DEVELOPMENT_DISPLAY_NAME "IUBPatchLib Development")
+set(CPACK_COMPONENT_DEVELOPMENT_DESCRIPTION "Headers, static library, and development files")
+set(CPACK_COMPONENT_DEVELOPMENT_DEPENDS runtime)
+set(CPACK_COMPONENT_TOOLS_DISPLAY_NAME "IUBPatchLib Tools")
+set(CPACK_COMPONENT_TOOLS_DESCRIPTION "Command-line tools")
+set(CPACK_COMPONENT_TOOLS_DEPENDS runtime)
+
+set(CPACK_GENERATOR "TGZ")
+if(UNIX)
+    if(EXISTS "/etc/debian_version")
+        list(APPEND CPACK_GENERATOR "DEB")
+    endif()
+    if(EXISTS "/etc/redhat-release")
+        list(APPEND CPACK_GENERATOR "RPM")
+    endif()
+endif()
+
+include(CPack)
+
+set(LIBRARY_TARGETS)
+if(TARGET iubpatch)
+    list(APPEND LIBRARY_TARGETS iubpatch)
+endif()
+if(TARGET iubpatch-static)
+    list(APPEND LIBRARY_TARGETS iubpatch-static)
+endif()
+
+if(LIBRARY_TARGETS)
+    install(TARGETS ${LIBRARY_TARGETS}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT runtime
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT development
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR} COMPONENT runtime
+    )
+endif()
+
+install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/iubpatch
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+    COMPONENT development
+    FILES_MATCHING PATTERN "*.h"
+)
+
+if(BUILD_TOOLS)
+    install(TARGETS iubpatch-cli
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        COMPONENT tools
+    )
+endif()

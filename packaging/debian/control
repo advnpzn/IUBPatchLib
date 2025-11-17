@@ -1,0 +1,41 @@
+Source: iubpatch
+Section: libs
+Priority: optional
+Maintainer: Package Maintainer <advnpzn@proton.me>
+Build-Depends: debhelper-compat (= 13),
+               cmake (>= 3.20),
+               g++ (>= 10),
+               pkg-config
+Standards-Version: 4.6.0
+Homepage: https://github.com/advnpzn/IUBPatchLib
+Rules-Requires-Root: no
+
+Package: libiubpatch0
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Library for IPS, UPS, and BPS binary patch formats
+ IUBPatchLib is a modern, cross-platform C++ library for applying binary
+ patches in IPS (International Patching System), UPS (Universal Patching
+ System), and BPS (Binary Patching System) formats.
+ .
+ This package contains the shared library.
+
+Package: libiubpatch-dev
+Section: libdevel
+Architecture: any
+Depends: libiubpatch0 (= ${binary:Version}), ${misc:Depends}
+Description: Development files for IUBPatchLib
+ IUBPatchLib is a modern, cross-platform C++ library for applying binary
+ patches in IPS, UPS, and BPS formats.
+ .
+ This package contains the development files (headers and pkg-config).
+
+Package: iubpatch-tools
+Section: utils
+Architecture: any
+Depends: libiubpatch0 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: Command-line tools for IPS, UPS, and BPS patches
+ Command-line utilities for applying and inspecting IPS, UPS, and BPS
+ binary patches.
+ .
+ This package contains the iubpatch-cli tool.

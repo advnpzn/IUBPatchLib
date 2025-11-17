@@ -1,0 +1,63 @@
+Name:           iubpatch
+Version:        @PROJECT_VERSION@
+Release:        1%{?dist}
+Summary:        Modern C++ library for IPS, UPS, and BPS binary patch formats
+
+License:        MIT
+URL:            https://github.com/advnpzn/IUBPatchLib
+Source0:        %{name}-%{version}.tar.gz
+
+BuildRequires:  cmake >= 3.20
+BuildRequires:  gcc-c++ >= 10
+BuildRequires:  make
+
+%description
+IUBPatchLib is a modern, cross-platform C++ library for applying binary 
+patches in IPS (International Patching System), UPS (Universal Patching System), 
+and BPS (Binary Patching System) formats. Commonly used for ROM hacking and 
+binary file patching.
+
+%package devel
+Summary:        Development files for %{name}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description devel
+Development files and headers for IUBPatchLib.
+
+%package tools
+Summary:        Command-line tools for %{name}
+Requires:       %{name}%{?_isa} = %{version}-%{release}
+
+%description tools
+Command-line tools for applying and inspecting IPS, UPS, and BPS patches.
+
+%prep
+%autosetup
+
+%build
+%cmake -DCMAKE_BUILD_TYPE=Release \
+       -DBUILD_SHARED_LIBS=ON \
+       -DBUILD_TOOLS=ON \
+       -DBUILD_EXAMPLES=OFF \
+       -DBUILD_TESTS=OFF
+%cmake_build
+
+%install
+%cmake_install
+
+%files
+%license LICENSE
+%doc README.md
+%{_libdir}/lib%{name}.so.*
+
+%files devel
+%{_includedir}/%{name}/
+%{_libdir}/lib%{name}.so
+%{_libdir}/pkgconfig/%{name}.pc
+
+%files tools
+%{_bindir}/%{name}-cli
+
+%changelog
+* @BUILD_DATE@ Package Maintainer <advnpzn@proton.me> - @PROJECT_VERSION@-1
+- Initial RPM release

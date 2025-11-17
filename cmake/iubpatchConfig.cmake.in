@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+include("${CMAKE_CURRENT_LIST_DIR}/iubpatchTargets.cmake")
+
+check_required_components(iubpatch)
+
+set(iubpatch_VERSION @PROJECT_VERSION@)
+set(iubpatch_FOUND TRUE)
+
+set(iubpatch_INCLUDE_DIRS "@PACKAGE_CMAKE_INSTALL_INCLUDEDIR@")
+set(iubpatch_LIBRARIES iubpatch::iubpatch)
+
+set(iubpatch_WITH_MMAP @IUB_ENABLE_MMAP@)
+
+message(STATUS "Found IUBPatchLib: ${iubpatch_VERSION}")

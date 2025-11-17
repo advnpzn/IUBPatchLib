@@ -1,0 +1,19 @@
+#!/usr/bin/make -f
+
+export DH_VERBOSE = 1
+
+%:
+	dh $@
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DBUILD_SHARED_LIBS=ON \
+		-DBUILD_TOOLS=ON \
+		-DBUILD_EXAMPLES=OFF \
+		-DBUILD_TESTS=OFF
+
+override_dh_auto_install:
+	dh_auto_install
+	# Remove any CMake files that shouldn't be in the package
+	find debian/tmp -name '*.cmake' -delete
