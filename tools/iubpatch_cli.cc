@@ -60,10 +60,10 @@ int cmd_apply(int argc, char* argv[]) {
     auto result = iubpatch::apply_patch(patch_path, source_path, output_path, options);
     
     if (result) {
-        std::cout << "✓ Patch applied successfully!\n";
+        std::cout << "Patch applied successfully!\n";
         return 0;
     } else {
-        std::cerr << "✗ Error: " << result.error().message << "\n";
+        std::cerr << "Error: " << result.error().message << "\n";
         if (!result.error().context.empty()) {
             std::cerr << "  Context: " << result.error().context << "\n";
         }
@@ -125,10 +125,10 @@ int cmd_validate(int argc, char* argv[]) {
     auto result = iubpatch::validate_patch(patch_path, source_path);
     
     if (result) {
-        std::cout << "✓ Patch is valid and can be applied\n";
+        std::cout << "Patch is valid and can be applied\n";
         return 0;
     } else {
-        std::cerr << "✗ Validation failed: " << result.error().message << "\n";
+        std::cerr << "Validation failed: " << result.error().message << "\n";
         return 1;
     }
 }
