@@ -1,5 +1,7 @@
 # IUBPatchLib
 
+[![CI/CD](https://github.com/advnpzn/IUBPatchLib/actions/workflows/ci.yml/badge.svg)](https://github.com/advnpzn/IUBPatchLib/actions/workflows/ci.yml)
+
 A modern, cross-platform C++ library for applying binary patches in IPS, UPS, and BPS formats created with usage for ROM hacks in mind, but I believe it can be used for anything.
 
 ## Features
