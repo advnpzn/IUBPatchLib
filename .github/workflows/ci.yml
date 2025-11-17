@@ -16,8 +16,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, ubuntu-20.04]
-        build_type: [Release, Debug]
+        os: [ubuntu-22.04]
+        build_type: [Release]
     
     steps:
     - name: Checkout code
