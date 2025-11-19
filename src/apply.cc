@@ -1,6 +1,7 @@
 #include "iubpatch/apply.h"
 #include "iubpatch/patch.h"
 #include "iubpatch/io.h"
+#include "iubpatch/crc32.h"
 #include <filesystem>
 #include <algorithm>
 
@@ -99,8 +100,34 @@ Result<void> validate_patch(
         return validate_result;
     }
     
-    // TODO: verify src file matches expected size/checksum
-    // for now tis is not needed, I guess.
+    auto metadata_result = patch_result.value()->get_metadata();
+    if (!metadata_result) {
+        return metadata_result.error();
+    }
+    
+    const auto& metadata = metadata_result.value();
+    
+    if (metadata.has_checksums) {
+        auto source_result = read_file(source_path);
+        if (!source_result) {
+            return source_result.error();
+        }
+        
+        const auto& source_data = source_result.value();
+        
+        if (metadata.src_size > 0 && source_data.size() != metadata.src_size) {
+             return ErrorInfo{ErrorCode::SourceSizeMismatch, 
+                "Source size mismatch: expected " + std::to_string(metadata.src_size) + 
+                ", got " + std::to_string(source_data.size())};
+        }
+        
+        auto src_crc = calc_crc32(source_data);
+        if (src_crc != metadata.source_checksum) {
+            return ErrorInfo{ErrorCode::ChecksumMismatch, 
+                "Source CRC32 mismatch: expected " + std::to_string(metadata.source_checksum) + 
+                ", got " + std::to_string(src_crc)};
+        }
+    }
     
     return Result<void>{};
 }
